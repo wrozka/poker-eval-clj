@@ -10,16 +10,14 @@
           flush (apply = (map first hand))
           straight? #(= (sort %) (map (partial + (apply min %)) (range 5)))
           straight (or (straight? ranks) (straight? (replace {12 -1} ranks)))
-          rank-counts (vals (frequencies ranks))
-          same-rank-max (apply max rank-counts)
-          pairs (count (filter #(= % 2) rank-counts))]
+          freq (sort (vals (frequencies ranks)))]
       (cond
-        (= same-rank-max 4) :four-of-a-kind
         (and flush straight) :straight-flush
         flush :flush
         straight :straight
-        (and (= same-rank-max 3) (= pairs 1)) :full-house
-        (= same-rank-max 3) :three-of-a-kind
-        (= pairs 2) :two-pair
-        (= pairs 1) :pair
+        (= freq [1 4]) :four-of-a-kind
+        (= freq [2 3]) :full-house
+        (= freq [1 1 3]) :three-of-a-kind
+        (= freq [1 2 2]) :two-pair
+        (= freq [1 1 1 2]) :pair
         :else :high-card)))

@@ -5,29 +5,21 @@
    :rank (.indexOf (seq "23456789TJQKA") r)})
 
 (defn eval-hand [hand]
-  (letfn [(make-card [[s r]] [s (.indexOf (seq "23456789TJQKA") r)])
-          (low-to-high? [ranks]
-            (let [high-card (last (sort ranks))
-                  low-card (first (sort ranks))]
-              (= (+ 4 low-card) high-card)))
-          (normalize-ace [ranks]
-            (map #(mod (+ % 1) 13) ranks)) 
-          (straight? [ranks]
-            (and (= (count (distinct ranks)) 5)
-              (or (low-to-high? ranks) (low-to-high? (normalize-ace ranks)))))]
-    (let [hand (map make-card hand)
+    (let [hand (map (fn [[s r]] [s (.indexOf (seq "23456789TJQKA") r)]) hand)
           ranks (map last hand)
           flush (= (count (distinct (map first hand))) 1)
+          straight? #(= (sort %) (map (partial + (apply min %)) (range 5)))
+          straight (or (straight? ranks) (straight? (replace {12 -1} ranks)))
           rank-counts (vals (frequencies ranks))
           same-rank-max (apply max rank-counts)
           pairs (count (filter #(= % 2) rank-counts))]
       (cond
         (= same-rank-max 4) :four-of-a-kind
-        (and flush (straight? ranks)) :straight-flush
+        (and flush straight) :straight-flush
         flush :flush
-        (straight? ranks) :straight
+        straight :straight
         (and (= same-rank-max 3) (= pairs 1)) :full-house
         (= same-rank-max 3) :three-of-a-kind
         (= pairs 2) :two-pair
         (= pairs 1) :pair
-        :else :high-card))))
+        :else :high-card)))

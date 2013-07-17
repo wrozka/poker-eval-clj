@@ -17,3 +17,15 @@
   (make-card "D3") => {:suit :diamond :rank 1}
   (make-card "D2") => {:suit :diamond :rank 0})
 
+(facts "about `eval-hand`"
+  (eval-hand ["HA" "D2" "H3" "C9" "DJ"]) => :high-card
+  (eval-hand ["HA" "HQ" "SJ" "DA" "HT"]) => :pair
+  (eval-hand ["HA" "DA" "HQ" "SQ" "HT"]) => :two-pair
+  (eval-hand ["HA" "DA" "CA" "HJ" "HT"]) => :three-of-a-kind
+  (eval-hand ["HA" "DK" "HQ" "HJ" "HT"]) => :straight
+  (eval-hand ["HT" "D9" "H8" "H7" "H6"]) => :straight
+  (eval-hand ["HA" "H2" "S3" "D4" "C5"]) => :straight
+  (eval-hand ["HA" "HK" "H2" "H4" "HT"]) => :flush
+  (eval-hand ["HA" "DA" "CA" "HJ" "DJ"]) => :full-house
+  (eval-hand ["HA" "DA" "CA" "SA" "DJ"]) => :four-of-a-kind
+  (eval-hand ["HA" "HK" "HQ" "HJ" "HT"]) => :straight-flush)

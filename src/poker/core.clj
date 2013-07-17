@@ -18,17 +18,11 @@
             (and (= (count (distinct ranks)) 5)
               (or (low-to-high? ranks) (low-to-high? (normalize-ace ranks)))))
           (flush? [suits]
-            (= (count (distinct suits)) 1))
-          (distribution [ranks]
-            (vals
-              (reduce
-                (fn [stats rank] (conj stats [rank (+ 1 (stats rank 0))])) 
-                {}
-                ranks)))]
+            (= (count (distinct suits)) 1))]
     (let [hand (map make-card hand)
           ranks (map :rank hand)
           suits (map :suit hand)
-          rank-counts (distribution ranks)
+          rank-counts (vals (frequencies ranks))
           same-rank-max (apply max rank-counts)
           pairs (count (filter #(= % 2) rank-counts))]
       (cond

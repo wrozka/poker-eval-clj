@@ -7,7 +7,7 @@
 (defn eval-hand [hand]
     (let [hand (map (fn [[s r]] [s (.indexOf (seq "23456789TJQKA") r)]) hand)
           ranks (map last hand)
-          flush (= (count (distinct (map first hand))) 1)
+          flush (apply = (map first hand))
           straight? #(= (sort %) (map (partial + (apply min %)) (range 5)))
           straight (or (straight? ranks) (straight? (replace {12 -1} ranks)))
           rank-counts (vals (frequencies ranks))
